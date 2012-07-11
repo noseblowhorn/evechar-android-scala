@@ -1,4 +1,4 @@
-package eu.fizzystuff.evechar.model.services
+package eu.fizzystuff.evechar.model.repositories
 import android.database.sqlite.SQLiteDatabase
 import android.database.Cursor
 import scala.collection.mutable.LinkedList
