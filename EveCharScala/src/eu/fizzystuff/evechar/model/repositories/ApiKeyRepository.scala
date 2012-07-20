@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.content.ContentValues
 
 class ApiKeyRepository extends SQLiteRepository[ApiKey] with ReadWriteRepository[ApiKey] {
-  
-	var db = null
 	
 	val SelectSql = "SELECT KeyId, VerificationCode FROM ApiKey"
 	val TableName = "ApiKeys"
@@ -19,13 +17,7 @@ class ApiKeyRepository extends SQLiteRepository[ApiKey] with ReadWriteRepository
     }
   
 	def GetAll(callback: (Seq[ApiKey]) => Unit) {
-	  
-	  var list = GetAll(SelectSql, new ArrayBuffer[String], c => {
-	      new ApiKey() {
-	      KeyId = c.getString(0)
-	      VerificationCode = c.getString(1)
-	    }
-	  });
+	  var list = GetAll(SelectSql, new ArrayBuffer[String]);
 	  
 	  callback(list)
 	}
@@ -52,5 +44,12 @@ class ApiKeyRepository extends SQLiteRepository[ApiKey] with ReadWriteRepository
 	
 	def Delete(entity: ApiKey) {
 	  Remove(TableName, WhereClause, entity)
+	}
+	
+	def CursorToEntity(c: Cursor): ApiKey = {
+	  new ApiKey() {
+	      KeyId = c.getString(0)
+	      VerificationCode = c.getString(1)
+	  }
 	}
 }

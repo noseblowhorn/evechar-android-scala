@@ -8,16 +8,16 @@ import android.content.ContentValues
 
 trait SQLiteRepository[T <: AnyRef] {
   import Helpers._
-  var db: SQLiteDatabase
+  var db: SQLiteDatabase = null
 
-  def GetAll(sql: String, params: Seq[String], mapper: Cursor => T): Seq[T] = {
+  def GetAll(sql: String, params: Seq[String]): Seq[T] = {
     val list = new ArrayBuffer[T]
 
     using(db.rawQuery(sql, params.toArray(classManifest[String])))(cursor => {
       cursor.moveToFirst()
 
       while (!cursor.isAfterLast()) {
-        list += mapper(cursor)
+        list += CursorToEntity(cursor)
         cursor.moveToNext()
       }
     })
@@ -39,15 +39,5 @@ trait SQLiteRepository[T <: AnyRef] {
 
   def EntityToContentValues(entity: T): ContentValues
   def EntityWhereArgs(entity: T): Array[String]
-  
-  //	def GetById(sql: String, id: Int, mapper: Cursor => T): T = {
-  //	  var result: T = None.get
-  //	  
-  //	  using(db.rawQuery(sql, Array(Integer.toString(id) )))(cursor => {
-  //	    cursor.moveToFirst()
-  //	    result = mapper(cursor)
-  //	  })
-  //	  
-  //	  return result
-  //	}
+  def CursorToEntity(c: Cursor): T
 }
